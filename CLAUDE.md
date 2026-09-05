@@ -1,7 +1,8 @@
 # SIRA — Inferencia optimizada con TensorRT
 
-Servir el modelo *champion* de detección (YOLO11n) optimizado con TensorRT sobre vídeo
-en tiempo real, en una workstation Fedora con RTX 5060.
+Servir el modelo *champion* de detección optimizado con TensorRT sobre vídeo en tiempo
+real, en una workstation Fedora con RTX 5060. El champion actual es un detector de **una
+sola clase** con ~20 M de parámetros (§9.2), pese a estar registrado como `yolo11n`.
 
 Este repositorio es el lado de **despliegue**. El entrenamiento, la evaluación y la
 promoción viven en `../camma-laparoscopy`, que publica los modelos en el MLflow
@@ -138,8 +139,9 @@ deserializarlo exige el intérprete y el paquete.
 - **`nms=False`**: el NMS se hace en el postproceso propio, no incrustado en el grafo.
 - Versiones fijadas en el `requirements` del contenedor.
 
-El modelo en producción es **YOLO11n a 640×640** (`config/yolo/train.yaml` y
-`predict.yaml` del repo de entrenamiento).
+Entrada 640×640, coherente con el `imgsz` de entrenamiento leído del propio checkpoint.
+Las características reales del modelo están en §9.2: no las asumas a partir del nombre
+del modelo registrado, que no corresponde con su tamaño.
 
 ### [3] `build` — ONNX → engine TensorRT
 
@@ -348,21 +350,37 @@ pipeline— no necesitan herramientas adicionales.
 
 ### 9.2 Contrato del modelo
 
-- **YOLO11n**, entrada **640×640** (`predict.yaml` del repo de entrenamiento).
-- **El número de clases y sus nombres se leen del artefacto, nunca se hardcodean.**
-  El `.pt` los lleva en `model.names`; el ONNX los delata en la forma de salida.
-  Persístelos en el sidecar de metadatos del engine (§9.5) y que el servidor los lea de
-  ahí.
+**Verificado abriendo el checkpoint y el ONNX generado** (`docs/fase-2-export-onnx.md`),
+no deducido de la configuración del repo de entrenamiento:
 
-  ⚠️ No los deduzcas de `config/datasets/data_general.yaml`: lista 133 entradas en
-  `catalog` pero declara `keep_classes: [1]`, y el catálogo agrupa por prefijo (`1_`
-  instrumental, `2_` materiales, `3_` anatomía). El número efectivo de clases del modelo
-  entrenado no es derivable de ese fichero.
+| | |
+| --- | --- |
+| Registrado como | `sira-yolo11n-General`, versión 17 |
+| Parámetros reales | **20 053 779 (~20 M)** |
+| Clases | **`nc = 1`** → `{0: "1_Fenestratedb bipolar forceps"}` |
+| Tarea | `detect` |
+| `imgsz` de entrenamiento | 640 |
 
-- **Entrada del engine:** `float32`, `NCHW`, `[1, 3, 640, 640]`, canales RGB,
-  valores en `[0, 1]`.
-- **Salida** (exportando con `nms=False`): `[1, 4+nc, 8400]`. Requiere transposición
-  antes del postproceso.
+⚠️ **El nombre del modelo registrado no corresponde a su tamaño.** 20 M parámetros
+coinciden con un YOLO11**m** (~20,1 M), no con un YOLO11**n** (~2,6 M). El registry tiene
+además un `sira-yolo11m-General` sin alias. Esto afecta a las expectativas de latencia y
+de VRAM: es un modelo casi 8 veces mayor que el asumido. **Pendiente de aclarar con el
+usuario**; no cambia el código, pero sí lo que cabe esperar del benchmark.
+
+⚠️ **Es un detector de una sola clase.** El catálogo de `data_general.yaml` lista 133
+entradas, pero `keep_classes: [1]` conserva literalmente el índice 1 del catálogo. Por eso
+`nc` y `names` **se leen del artefacto y se persisten** en `model.onnx.json`: deducirlos
+del YAML habría dado 133 y roto el postproceso en silencio.
+
+**Contrato del ONNX** (`models/model.onnx`, opset 18, 80 428 503 B):
+
+| | Nombre | Forma | Tipo |
+| --- | --- | --- | --- |
+| Entrada | `images` | `[1, 3, 640, 640]` | FLOAT |
+| Salida | `output0` | `[1, 5, 8400]` | FLOAT |
+
+La salida es `[1, 4+nc, 8400]` con `nc=1`. Exportado con `nms=False` y `dynamic=False`.
+Canales RGB, valores en `[0, 1]`.
 
 ### 9.3 Preproceso
 
@@ -379,9 +397,12 @@ coordenadas del frame original.
 
 ### 9.4 Postproceso
 
-1. Transponer a `[8400, 4+nc]`.
+1. Transponer `[1, 5, 8400]` → `[8400, 5]`.
 2. `(cx, cy, w, h)` → `(x1, y1, x2, y2)`.
-3. Score = máximo sobre las `nc` clases. Umbral de confianza **0.45**.
+3. Score = máximo sobre las `nc` clases. Con `nc=1` es directamente la columna 4, pero
+   **escribe el código genérico sobre `nc`**: se lee de `model.onnx.json`, y un
+   reentrenamiento con más clases no debe obligar a tocar el postproceso.
+   Umbral de confianza **0.45**.
 4. **NMS por clase**, umbral IoU **0.5**.
 5. Revertir letterbox con `scale` y padding.
 

@@ -25,7 +25,7 @@ fallo, no se limpia. Nada se marca como completado sin salida real que lo respal
 | --- | --- | --- |
 | 0 | [Preparación del host](fase-0-preparacion-host.md) | **completada** (2026-09-05) |
 | 1 | [Cliente del registry MLflow](fase-1-cliente-registry.md) | **completada** (2026-09-05) |
-| 2 | Export a ONNX | pendiente |
+| 2 | [Export a ONNX](fase-2-export-onnx.md) | **completada** (2026-09-05) |
 | 3 | Builder de engines TensorRT | pendiente |
 | 4 | Runtime de inferencia | pendiente |
 | 5 | Servidor de vídeo | pendiente |
