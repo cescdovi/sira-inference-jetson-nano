@@ -23,6 +23,7 @@ serve = ["fastapi", "uvicorn[standard]"]
 fetch = "sira.cli.fetch:main"
 export = "sira.cli.export:main"
 build = "sira.cli.build:main"
+predict = "sira.cli.predict:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
