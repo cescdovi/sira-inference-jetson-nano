@@ -26,8 +26,8 @@ fallo, no se limpia. Nada se marca como completado sin salida real que lo respal
 | 0 | [Preparación del host](fase-0-preparacion-host.md) | **completada** (2026-09-05) |
 | 1 | [Cliente del registry MLflow](fase-1-cliente-registry.md) | **completada** (2026-09-05) |
 | 2 | [Export a ONNX](fase-2-export-onnx.md) | **completada** (2026-09-05) |
-| 3 | Builder de engines TensorRT | pendiente |
-| 4 | Runtime de inferencia | pendiente |
+| 3 | [Builder de engines TensorRT](fase-3-engines-tensorrt.md) | **completada** (FP32/FP16); INT8 pendiente |
+| 4 | [Runtime de inferencia](fase-4-runtime-inferencia.md) | **completada** (2026-09-06) |
 | 5 | Servidor de vídeo | pendiente |
 | 6 | Benchmark | pendiente |
 
