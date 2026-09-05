@@ -71,13 +71,26 @@ def _iou(a: tuple[float, ...], b: tuple[float, ...]) -> float:
 
 
 def comparar_con_ultralytics(
-    imagen: np.ndarray, ruta_pt: Path, mias: list[Deteccion], conf: float, iou: float
+    imagen: np.ndarray,
+    ruta_pt: Path,
+    mias: list[Deteccion],
+    conf: float,
+    iou: float,
+    imgsz: int = 640,
 ) -> dict:
-    """Empareja mis detecciones con las de Ultralytics por IoU maximo."""
+    """Empareja mis detecciones con las de Ultralytics por IoU maximo.
+
+    `rect=False` es imprescindible para que la comparacion sea justa: por defecto
+    Ultralytics hace inferencia **rectangular**, ajustando la entrada a la relacion de
+    aspecto del frame, mientras que el ONNX exportado tiene entrada cuadrada fija. Sin
+    forzarlo, las cajas difieren por el preproceso y parece un fallo del postproceso.
+    """
     from ultralytics import YOLO
 
     modelo = YOLO(str(ruta_pt))
-    resultado = modelo.predict(imagen, conf=conf, iou=iou, verbose=False, device=0)[0]
+    resultado = modelo.predict(
+        imagen, conf=conf, iou=iou, imgsz=imgsz, rect=False, verbose=False, device=0
+    )[0]
     ref = [
         (
             tuple(float(v) for v in caja.xyxy[0].tolist()),
@@ -138,7 +151,6 @@ def main(argv: list[str] | None = None) -> int:
             detecciones = postprocesar(
                 salida, params, names=runtime.names, conf=args.conf, iou=args.iou
             )
-            names = runtime.names
     except EngineError as exc:
         logger.error("%s", exc)
         return 1
@@ -152,7 +164,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.comparar:
         ruta_pt = args.pt or (config.dir_modelos / "best.pt")
         informe["comparacion"] = comparar_con_ultralytics(
-            imagen, ruta_pt, detecciones, args.conf, args.iou
+            imagen, ruta_pt, detecciones, args.conf, args.iou, imgsz=runtime.imgsz
         )
 
     if args.salida_anotada:
