@@ -1,0 +1,30 @@
+# Secretos
+.env
+
+# Artefactos de modelo y datos: nunca a git
+models/
+data/
+*.pt
+*.onnx
+*.engine
+*.plan
+*.mp4
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Resultados de benchmark y logs
+results/
+*.log
+
+# SO / editor
+.DS_Store
+.vscode/
+.idea/

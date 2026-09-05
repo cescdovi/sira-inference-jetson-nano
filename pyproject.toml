@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sira-inference"
+version = "0.1.0"
+description = "Inferencia de deteccion optimizada con TensorRT sobre video"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+# TensorRT y runtime de inferencia (fases 4+). Instalado ya en la maquina.
+runtime = ["tensorrt==11.2.1.2", "cuda-python", "numpy", "opencv-python-headless"]
+# Export .pt -> ONNX (fase 3). Arrastra torch, es pesado.
+export = ["ultralytics", "onnx"]
+# Servidor de video (fase 6).
+serve = ["fastapi", "uvicorn[standard]"]
+
+[project.scripts]
+fetch = "sira.cli.fetch:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
