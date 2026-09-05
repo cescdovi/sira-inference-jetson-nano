@@ -15,12 +15,13 @@ dependencies = [
 # TensorRT y runtime de inferencia (fases 4+). Instalado ya en la maquina.
 runtime = ["tensorrt==11.2.1.2", "cuda-python", "numpy", "opencv-python-headless"]
 # Export .pt -> ONNX (fase 3). Arrastra torch, es pesado.
-export = ["ultralytics", "onnx"]
+export = ["ultralytics", "onnx", "onnxslim"]
 # Servidor de video (fase 6).
 serve = ["fastapi", "uvicorn[standard]"]
 
 [project.scripts]
 fetch = "sira.cli.fetch:main"
+export = "sira.cli.export:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
