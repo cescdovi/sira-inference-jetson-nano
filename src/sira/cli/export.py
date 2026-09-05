@@ -26,7 +26,8 @@ def construir_parser() -> argparse.ArgumentParser:
     p.add_argument("--destino", type=Path, help="Ruta del ONNX de salida")
     p.add_argument("--imgsz", type=int, default=640, help="Lado de la entrada")
     p.add_argument("--opset", type=int, help="Opset ONNX (por defecto, el de ultralytics)")
-    p.add_argument("--half", action="store_true", help="Exportar en FP16")
+    p.add_argument("--half", action="store_true", help="Exportar en FP16 (requiere GPU)")
+    p.add_argument("--device", help="Dispositivo de export: cpu o indice de GPU")
     p.add_argument("--sin-simplify", action="store_true", help="No simplificar el grafo")
     p.add_argument(
         "--solo-inspeccionar",
@@ -71,6 +72,7 @@ def main(argv: list[str] | None = None) -> int:
             opset=args.opset,
             half=args.half,
             simplify=not args.sin_simplify,
+            device=args.device,
         )
     except ExportError as exc:
         logger.error("%s", exc)

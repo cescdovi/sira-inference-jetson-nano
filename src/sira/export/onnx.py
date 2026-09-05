@@ -133,6 +133,7 @@ def exportar_onnx(
     opset: int | None = None,
     half: bool = False,
     simplify: bool = True,
+    device: str | None = None,
 ) -> ResultadoExport:
     """Exporta el checkpoint a ONNX y devuelve los metadatos del resultado.
 
@@ -142,6 +143,10 @@ def exportar_onnx(
 
     `dynamic=False`: forma de entrada fija. Simplifica el engine y el runtime, y el
     servidor siempre alimenta frames del mismo tamano tras el letterbox.
+
+    El export corre en CPU salvo que se pida `half`: Ultralytics no puede castear a FP16
+    sin GPU. Se hace en CPU por defecto a proposito, para que un problema de soporte de
+    la GPU no se confunda con un problema de exportacion.
     """
     from ultralytics import YOLO
 
@@ -166,7 +171,7 @@ def exportar_onnx(
         "dynamic": False,
         "simplify": simplify,
         "half": half,
-        "device": "cpu",
+        "device": device if device is not None else ("0" if half else "cpu"),
         "verbose": False,
     }
     if opset is not None:
