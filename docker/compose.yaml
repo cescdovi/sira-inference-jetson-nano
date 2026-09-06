@@ -13,6 +13,14 @@ services:
       - ../results:/app/results
     env_file:
       - ../.env
+    environment:
+      # Obligatorio y con este orden: `environment` gana sobre `env_file`, y el .env del
+      # repositorio trae SIRA_SERVE_HOST=127.0.0.1, que es lo correcto para ejecutar en
+      # el host pero deja al servicio escuchando en el loopback *del contenedor*, donde
+      # el mapeo de puertos no puede alcanzarlo. Dentro del contenedor la red esta
+      # aislada; la exposicion real la decide `ports`, que publica solo en el loopback
+      # del host.
+      SIRA_SERVE_HOST: "0.0.0.0"
     # Publicado solo en loopback del host: el servicio no tiene autenticacion.
     # Se accede desde fuera por tunel ssh.
     ports:
