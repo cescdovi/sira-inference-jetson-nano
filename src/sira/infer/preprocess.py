@@ -80,6 +80,14 @@ def preparar_tensor(
     """
     acolchada, params = letterbox(imagen_bgr, imgsz)
     rgb = cv2.cvtColor(acolchada, cv2.COLOR_BGR2RGB)
-    tensor = np.ascontiguousarray(rgb.transpose(2, 0, 1)[None], dtype=dtype)
-    tensor /= dtype(255.0) if hasattr(dtype, "__call__") else 255.0
+
+    # La aritmetica se hace SIEMPRE en float32 y solo despues se castea. numpy no tiene
+    # SIMD nativo para float16: dividir entre 255 en media precision se emula elemento a
+    # elemento y cuesta un orden de magnitud mas. Medido: el preproceso pasaba de 0,6 ms
+    # a 3,8 ms, hasta el punto de que los engines FP16 daban MENOS fps que los FP32 pese
+    # a inferir 2,4 veces mas rapido.
+    tensor = np.ascontiguousarray(rgb.transpose(2, 0, 1)[None], dtype=np.float32)
+    tensor /= 255.0
+    if np.dtype(dtype) != np.float32:
+        tensor = tensor.astype(dtype, copy=False)
     return tensor, params
