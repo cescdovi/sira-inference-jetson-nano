@@ -28,7 +28,8 @@ COPY web/ ./web/
 
 ENV PYTHONPATH=/app/src \
     PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
+    PYTHONDONTWRITEBYTECODE=1 \
+    YOLO_CONFIG_DIR=/tmp/Ultralytics
 
 # Dentro del contenedor se escucha en todas las interfaces porque la red esta aislada;
 # la exposicion real la decide el mapeo de puertos del compose, que publica solo en
