@@ -61,6 +61,10 @@ class RuntimeTensorRT:
                 self._nombre_salida = self._nombre_salida or nombre
 
         self.forma_entrada = tuple(self.engine.get_tensor_shape(self._nombre_entrada))
+        # El alto y el ancho se leen del engine, no de los metadatos: el engine es la
+        # verdad sobre lo que acepta, y con entradas rectangulares un `imgsz` escalar
+        # de los metadatos seria ambiguo.
+        self.hw: tuple[int, int] = (int(self.forma_entrada[2]), int(self.forma_entrada[3]))
         self.forma_salida = tuple(self.engine.get_tensor_shape(self._nombre_salida))
         # El dtype sale del engine: uno construido desde un ONNX FP16 espera FLOAT16, y
         # alimentarlo con float32 produce basura silenciosamente.

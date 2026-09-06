@@ -24,7 +24,10 @@ def construir_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--pt", type=Path, help="Checkpoint de entrada")
     p.add_argument("--destino", type=Path, help="Ruta del ONNX de salida")
-    p.add_argument("--imgsz", type=int, default=640, help="Lado de la entrada")
+    p.add_argument(
+        "--imgsz", type=int, nargs="+", default=[640],
+        help="Lado de la entrada, o alto y ancho (p. ej. --imgsz 256 640)",
+    )
     p.add_argument("--opset", type=int, help="Opset ONNX (por defecto, el de ultralytics)")
     p.add_argument("--half", action="store_true", help="Exportar en FP16 (requiere GPU)")
     p.add_argument("--device", help="Dispositivo de export: cpu o indice de GPU")
@@ -68,7 +71,7 @@ def main(argv: list[str] | None = None) -> int:
         resultado = exportar_onnx(
             ruta_pt=ruta_pt,
             destino=destino,
-            imgsz=args.imgsz,
+            imgsz=args.imgsz if len(args.imgsz) > 1 else args.imgsz[0],
             opset=args.opset,
             half=args.half,
             simplify=not args.sin_simplify,

@@ -50,7 +50,7 @@ class ResultadoExport:
     onnx: str
     onnx_sha256: str
     onnx_bytes: int
-    imgsz: int
+    imgsz: Any
     opset: int
     nms_incrustado: bool
     dinamico: bool
@@ -129,7 +129,7 @@ def _describir_onnx(ruta_onnx: Path) -> tuple[dict[str, Any], dict[str, Any]]:
 def exportar_onnx(
     ruta_pt: Path,
     destino: Path,
-    imgsz: int = 640,
+    imgsz: int | list[int] = 640,
     opset: int | None = None,
     half: bool = False,
     simplify: bool = True,
@@ -156,10 +156,11 @@ def exportar_onnx(
         info.task, info.nc, info.parametros / 1e6, info.imgsz_entrenamiento,
     )
 
-    if info.imgsz_entrenamiento and info.imgsz_entrenamiento != imgsz:
-        logger.warning(
-            "Exportando a imgsz=%d pero el modelo se entreno con %d. "
-            "El preproceso debe usar el mismo valor que este export.",
+    if info.imgsz_entrenamiento and imgsz != info.imgsz_entrenamiento:
+        logger.info(
+            "Exportando a imgsz=%s; el modelo se entreno con %d. La forma rectangular es "
+            "deliberada: YOLO es totalmente convolucional y Ultralytics hace inferencia "
+            "rectangular por defecto.",
             imgsz, info.imgsz_entrenamiento,
         )
 
@@ -207,7 +208,7 @@ def exportar_onnx(
         onnx=destino.name,
         onnx_sha256=_sha256(destino),
         onnx_bytes=destino.stat().st_size,
-        imgsz=imgsz,
+        imgsz=imgsz if isinstance(imgsz, int) else list(imgsz),
         opset=int(opset_real),
         nms_incrustado=False,
         dinamico=False,

@@ -26,20 +26,35 @@ class Letterbox:
     ancho_original: int
 
 
+def normalizar_hw(imgsz: int | tuple[int, int] | list[int]) -> tuple[int, int]:
+    """Acepta un lado o `(alto, ancho)` y devuelve siempre `(alto, ancho)`."""
+    if isinstance(imgsz, int):
+        return imgsz, imgsz
+    alto, ancho = imgsz
+    return int(alto), int(ancho)
+
+
 def letterbox(
-    imagen: np.ndarray, imgsz: int = 640, relleno: tuple[int, int, int] = RELLENO
+    imagen: np.ndarray,
+    imgsz: int | tuple[int, int] = 640,
+    relleno: tuple[int, int, int] = RELLENO,
 ) -> tuple[np.ndarray, Letterbox]:
     """Redimensiona conservando la relacion de aspecto y rellena hasta `imgsz`.
+
+    `imgsz` puede ser un lado (entrada cuadrada) o `(alto, ancho)`. Con la relacion de
+    aspecto de este video (2560x1024) una entrada cuadrada dejaria el 60 % del tensor en
+    relleno, asi que la forma rectangular no es un caso raro sino el habitual.
 
     El relleno se reparte a ambos lados (imagen centrada), como en Ultralytics: si se
     pusiera todo a un lado, las cajas saldrian desplazadas justo la mitad del padding.
     """
+    destino_alto, destino_ancho = normalizar_hw(imgsz)
     alto, ancho = imagen.shape[:2]
-    escala = min(imgsz / alto, imgsz / ancho)
+    escala = min(destino_alto / alto, destino_ancho / ancho)
 
     sin_pad = (int(round(ancho * escala)), int(round(alto * escala)))
-    dw = (imgsz - sin_pad[0]) / 2
-    dh = (imgsz - sin_pad[1]) / 2
+    dw = (destino_ancho - sin_pad[0]) / 2
+    dh = (destino_alto - sin_pad[1]) / 2
 
     if (ancho, alto) != sin_pad:
         imagen = cv2.resize(imagen, sin_pad, interpolation=cv2.INTER_LINEAR)
@@ -55,7 +70,9 @@ def letterbox(
     )
 
 
-def preparar_tensor(imagen_bgr: np.ndarray, imgsz: int = 640, dtype=np.float32):
+def preparar_tensor(
+    imagen_bgr: np.ndarray, imgsz: int | tuple[int, int] = 640, dtype=np.float32
+):
     """BGR uint8 -> tensor NCHW normalizado, mas los parametros del letterbox.
 
     `dtype` sale del engine: uno construido desde un ONNX FP16 espera FLOAT16, y pasarle
