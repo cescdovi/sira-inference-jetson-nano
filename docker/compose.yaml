@@ -1,0 +1,27 @@
+services:
+  sira:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: sira-inference:0.1.0
+    # Los modelos, los datos y los resultados son volumenes, no capas de la imagen: pesan
+    # cientos de MB, cambian a menudo y los engines son especificos de esta GPU y de esta
+    # version de TensorRT, asi que no tiene sentido hornearlos.
+    volumes:
+      - ../models:/app/models
+      - ../data:/app/data
+      - ../results:/app/results
+    env_file:
+      - ../.env
+    # Publicado solo en loopback del host: el servicio no tiene autenticacion.
+    # Se accede desde fuera por tunel ssh.
+    ports:
+      - "127.0.0.1:8080:8080"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped

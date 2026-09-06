@@ -213,25 +213,6 @@ Esto añade una dependencia nueva (`nvidia-modelopt`) y trabajo real a las fases
 a TensorRT 10.x, donde siguen existiendo los flags de precisión y los calibradores
 clásicos, con mucho más material disponible. Está sin resolver.
 
-## Incidencias
-
-**2026-09-05 — La máquina se suspendió a mitad de la fase.**
-
-Dejó de responder a ICMP y con el puerto 22 cerrado. Causa: suspensión automática
-programada a los 15 minutos de inactividad. El usuario la reactivó. No se había
-modificado nada del host, así que no hubo que limpiar nada.
-
-Sigue siendo un riesgo para operaciones largas —descargas de wheels, construcción de
-engines, benchmarks sobre vídeo completo—. Conviene desactivar la suspensión mientras
-dure el trabajo.
-
-**2026-09-05 — `expect` en línea falla en silencio.**
-
-La forma `expect -c '...'` devuelve sin salida y sin error, mientras que un script
-`expect` en fichero funciona de forma fiable. Además, `sudo` no puede pedir contraseña sin
-TTY, así que la conexión necesita `ssh -tt`. Ambas cosas están resueltas en el wrapper
-`/tmp/ssh_t.exp`, pero desaparecerían instalando una clave pública con `ssh-copy-id`.
-
 ## Decisiones
 
 - **Espacio de usuario en vez de contenedores.** Forzado por la ausencia de sudo, pero el
