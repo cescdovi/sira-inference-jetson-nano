@@ -310,7 +310,7 @@ reales e incidencias.
 `models/model_r_fp16.engine` y entrada 256×640. Versiones fijadas en `requirements.lock`.
 
 **Fuera de alcance por decisión del usuario:** INT8. A la vista del benchmark habría
-aportado poco — la inferencia ya es el 11 % del tiempo total.
+aportado poco — la inferencia ya es el 15 % del tiempo total.
 
 **Siguiente paso natural, si el objetivo pasa a ser el rendimiento del servicio:** el
 cuello de botella está en el pre y el postproceso en CPU, no en el modelo. Por orden de

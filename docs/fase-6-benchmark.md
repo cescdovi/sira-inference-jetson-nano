@@ -108,4 +108,4 @@ latencia de inferencia, el pipeline parecía correcto.
 - El cuello de botella ya no es el modelo, sino el pre y el postproceso en CPU (fase 5).
   Cualquier optimización adicional debería ir ahí, no a cuantizar más.
 - INT8 se descartó por decisión del usuario. A la vista de estos números habría aportado
-  poco: la inferencia ya es una fracción menor del tiempo total.
+  poco: la inferencia ya es el 15 % del tiempo total (ver [optimizacion-inferencia](optimizacion-inferencia.md)).

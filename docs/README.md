@@ -220,9 +220,10 @@ calidad: las detecciones coinciden con las del modelo original en un 99,7 %.
 precisión real del modelo. Lo que se mide es cuánto se aparta cada versión optimizada de
 la de referencia, que es una pregunta distinta y así está etiquetado en los resultados.
 
-Y un matiz importante: la inferencia ya sólo supone el 11 % del tiempo total. Lo que
-domina ahora es preparar la imagen y comprimir el vídeo para enviarlo al navegador, ambas
-tareas de CPU. Optimizar más el modelo apenas cambiaría nada; si se quisiera ir más
-rápido, habría que atacar esas dos.
+Y un matiz importante: la inferencia ya sólo supone el 15 % del tiempo total. Lo que
+domina ahora es comprimir la imagen para enviarla al navegador (casi la mitad) y
+prepararla para la red, ambas tareas de CPU. Optimizar más el modelo apenas cambiaría
+nada; si se quisiera ir más rápido, habría que atacar esas dos.
 
-Detalle en [fase-6](fase-6-benchmark.md).
+Detalle en [fase-6](fase-6-benchmark.md), y la discusión completa en
+[optimizacion-inferencia](optimizacion-inferencia.md).

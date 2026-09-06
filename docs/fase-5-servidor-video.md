@@ -57,32 +57,35 @@ Content-Length: 286152
 
 ## El hallazgo: TensorRT no es el cuello de botella
 
-Tiempos por etapa, p50 sobre ventana deslizante:
+Tiempos por etapa, p50 sobre ventana deslizante. **Cifras posteriores al arreglo del
+preproceso en FP16** descrito en [fase-6](fase-6-benchmark.md); la primera medición de
+esta fase se tomó antes de ese arreglo y daba un preproceso de 4,53 ms:
 
 | Etapa | p50 (ms) | p95 (ms) | % del total |
 | --- | --- | --- | --- |
-| decode | 1,668 | 1,857 | 12 % |
-| **preproceso** | **4,525** | 5,035 | **33 %** |
-| inferencia | 1,528 | 1,553 | 11 % |
-| postproceso | 0,257 | 0,325 | 2 % |
-| anotado | 0,919 | 1,104 | 7 % |
-| **encode JPEG** | **4,715** | 5,020 | **35 %** |
+| **encode JPEG** | **4,72** | 4,88 | **46,1 %** |
+| preproceso | 1,81 | 1,90 | 17,7 % |
+| inferencia | 1,52 | 1,54 | 14,9 % |
+| decode | 1,09 | 1,71 | 10,7 % |
+| anotado | 0,87 | 1,14 | 8,5 % |
+| postproceso | 0,22 | 0,32 | 2,2 % |
 
-Total ≈ 13,6 ms por frame, techo teórico ~73 fps.
+Total ≈ 10,23 ms por frame, techo teórico ~98 fps.
 
-**La inferencia con TensorRT es el 11 % del pipeline.** Los dos tercios los ocupan el
-preproceso y la codificación JPEG, ambos trabajo de CPU sobre frames de 2560×1024.
+**La inferencia con TensorRT es el 15 % del pipeline.** Casi la mitad se va en comprimir
+el JPEG para enviarlo al navegador, y el resto en preparar la imagen y decodificar el
+vídeo: todo trabajo de CPU sobre frames de 2560×1024.
 
 Esto es exactamente lo que la especificación advertía que ocurriría si no se medían las
 etapas por separado: se habría atribuido a TensorRT un techo que impone la CPU. Y tiene
 una consecuencia incómoda para el proyecto: **seguir optimizando el modelo apenas movería
-la aguja**. Bajar la inferencia de 1,53 ms a, digamos, 1,0 ms con INT8 mejoraría el total
-un 4 %.
+la aguja**. Si la inferencia costara cero, el sistema pasaría de 98 a 115 fps, un 17 %.
+Codificar el JPEG a media resolución lo llevaría a 149 fps, un 53 %.
 
 Las palancas reales, por orden de impacto:
 
-1. **Codificar el JPEG a menor resolución.** El navegador no necesita 2560×1024; a 1280×512
-   el coste caería a la cuarta parte. Es la mejora más barata que existe aquí.
+1. **Codificar el JPEG a menor resolución.** El navegador no necesita 2560×1024; a
+   1280×512 el coste caería a la cuarta parte. Es la mejora más barata que existe aquí.
 2. **Preproceso en GPU.** El `resize`, la conversión de color y la normalización se hacen
    hoy en CPU con OpenCV sobre el frame completo.
 3. **Decodificación por hardware (NVDEC)** en lugar de `cv2.VideoCapture`.
