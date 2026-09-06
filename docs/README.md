@@ -28,7 +28,7 @@ fallo, no se limpia. Nada se marca como completado sin salida real que lo respal
 | 2 | [Export a ONNX](fase-2-export-onnx.md) | **completada** (2026-09-05) |
 | 3 | [Builder de engines TensorRT](fase-3-engines-tensorrt.md) | **completada** (FP32/FP16); INT8 pendiente |
 | 4 | [Runtime de inferencia](fase-4-runtime-inferencia.md) | **completada** (2026-09-06) |
-| 5 | Servidor de vídeo | pendiente |
+| 5 | [Servidor de vídeo](fase-5-servidor-video.md) | **completada** (2026-09-06) |
 | 6 | Benchmark | pendiente |
 
 Las fases y su contenido están definidas en [`../CLAUDE.md`](../CLAUDE.md) §8. Las
