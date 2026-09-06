@@ -46,7 +46,6 @@ class RuntimeTensorRT:
 
         self.meta = self._leer_meta(ruta_engine)
         self.nc: int = int(self.meta.get("nc", 0))
-        self.imgsz: int = int(self.meta.get("imgsz", 640)) or 640
         self.names: dict[int, str] = {
             int(k): str(v) for k, v in (self.meta.get("names") or {}).items()
         }
