@@ -292,19 +292,28 @@ ejemplos, mensajes de commit ni salidas de depuración.
 
 ## 8. Fases
 
-0. ✅ **Preparar el host** — completada (`docs/fase-0-preparacion-host.md`). TensorRT
-   11.2.1.2 en `~/sira-venv`, verificado construyendo un engine real sobre la GPU.
-1. **Cliente del registry** — resolver `champion` y descargar `best.pt` con procedencia.
-2. **Export a ONNX** — con `nms=False` e `imgsz` explícito. Un ONNX por precisión (§4.3).
-3. **Builder de engines** — FP32 y FP16 primero; INT8 con cuantización explícita después.
-4. **Runtime de inferencia** — pre/postproceso propios, verificados contra las
-   detecciones de referencia de Ultralytics sobre el `.pt`.
-5. **Servidor de vídeo** — streaming, backpressure, UI.
-6. **Benchmark** — la matriz de §4.5.
+Todas completadas (2026-09-06). Cada una documentada en `docs/`, con runbook, salidas
+reales e incidencias.
 
-Cierra cada fase con algo ejecutable y verificado en la máquina antes de pasar a la
-siguiente. Es un prototipo: prioriza el camino completo funcionando sobre la
-sofisticación de cada pieza.
+| | Fase | Resultado |
+| --- | --- | --- |
+| 0 | [Preparación del host](docs/fase-0-preparacion-host.md) | TensorRT 11.2.1.2 en `~/sira-venv`, sin root ni contenedores |
+| 1 | [Cliente del registry](docs/fase-1-cliente-registry.md) | `champion` v17 descargado con procedencia |
+| 2 | [Export a ONNX](docs/fase-2-export-onnx.md) | `nc=1`, ~20 M parámetros, salida `[1,5,N]` |
+| 3 | [Engines TensorRT](docs/fase-3-engines-tensorrt.md) | FP32 y FP16, cuadrado y rectangular |
+| 4 | [Runtime de inferencia](docs/fase-4-runtime-inferencia.md) | Pipeline propio, IoU 0,9996 vs Ultralytics |
+| 5 | [Servidor de vídeo](docs/fase-5-servidor-video.md) | 30 fps sostenidos, MJPEG + UI |
+| 6 | [Benchmark](docs/fase-6-benchmark.md) | 5,38× en inferencia, 2,55× extremo a extremo |
+
+**Configuración de despliegue:** `models/model_r_fp16.engine`, entrada 256×640.
+
+**Fuera de alcance por decisión del usuario:** INT8. A la vista del benchmark habría
+aportado poco — la inferencia ya es el 11 % del tiempo total.
+
+**Siguiente paso natural, si el objetivo pasa a ser el rendimiento del servicio:** el
+cuello de botella está en el pre y el postproceso en CPU, no en el modelo. Por orden de
+impacto: codificar el JPEG a menor resolución, preproceso en GPU, decodificación por
+hardware.
 
 ---
 
