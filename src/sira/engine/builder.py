@@ -55,7 +55,7 @@ class MetadatosEngine:
     compute_cap: str
     onnx: str
     onnx_sha256: str
-    imgsz: int
+    imgsz: Any
     nc: int
     names: dict[str, str]
     entrada: dict[str, Any]
@@ -233,7 +233,7 @@ def construir_engine(
         compute_cap=gpu.compute_cap,
         onnx=ruta_onnx.name,
         onnx_sha256=meta_onnx.get("onnx_sha256") or _sha256(ruta_onnx),
-        imgsz=int(meta_onnx.get("imgsz", 0)),
+        imgsz=meta_onnx.get("imgsz", 0),
         nc=int(meta_onnx.get("nc", 0)),
         names={str(k): str(v) for k, v in (meta_onnx.get("names") or {}).items()},
         entrada=entrada,
