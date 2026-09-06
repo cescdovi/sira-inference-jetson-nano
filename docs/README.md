@@ -30,6 +30,7 @@ fallo, no se limpia. Nada se marca como completado sin salida real que lo respal
 | 4 | [Runtime de inferencia](fase-4-runtime-inferencia.md) | **completada** (2026-09-06) |
 | 5 | [Servidor de vídeo](fase-5-servidor-video.md) | **completada** (2026-09-06) |
 | 6 | [Benchmark](fase-6-benchmark.md) | **completada** (2026-09-06) |
+| 7 | [Contenerización](fase-7-contenerizacion.md) | en curso |
 
 Las fases y su contenido están definidas en [`../CLAUDE.md`](../CLAUDE.md) §8. Las
 especificaciones técnicas (versiones, contratos, esquemas) están en §9 de ese mismo
