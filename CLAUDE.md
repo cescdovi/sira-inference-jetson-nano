@@ -304,8 +304,10 @@ reales e incidencias.
 | 4 | [Runtime de inferencia](docs/fase-4-runtime-inferencia.md) | Pipeline propio, IoU 0,9996 vs Ultralytics |
 | 5 | [Servidor de vídeo](docs/fase-5-servidor-video.md) | 30 fps sostenidos, MJPEG + UI |
 | 6 | [Benchmark](docs/fase-6-benchmark.md) | 5,38× en inferencia, 2,55× extremo a extremo |
+| 7 | [Contenerización](docs/fase-7-contenerizacion.md) | Imagen reproducible; mismas cifras que el venv |
 
-**Configuración de despliegue:** `models/model_r_fp16.engine`, entrada 256×640.
+**Configuración de despliegue:** `docker compose -f docker/compose.yaml up -d`, con
+`models/model_r_fp16.engine` y entrada 256×640. Versiones fijadas en `requirements.lock`.
 
 **Fuera de alcance por decisión del usuario:** INT8. A la vista del benchmark habría
 aportado poco — la inferencia ya es el 11 % del tiempo total.
