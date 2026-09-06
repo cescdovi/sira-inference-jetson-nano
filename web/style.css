@@ -1,0 +1,70 @@
+:root {
+  --fondo: #f6f7f9;
+  --panel: #ffffff;
+  --borde: #dfe3e8;
+  --texto: #1c2024;
+  --tenue: #6b7280;
+  --acento: #0f7b5f;
+  --aviso: #b45309;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fondo: #0e1116;
+    --panel: #161b22;
+    --borde: #2a313a;
+    --texto: #e6e8eb;
+    --tenue: #9aa4b2;
+    --acento: #3fbf95;
+    --aviso: #f0b429;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+}
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding: .9rem 1.25rem;
+  border-bottom: 1px solid var(--borde); background: var(--panel);
+}
+h1 { font-size: 1.05rem; margin: 0; letter-spacing: .02em; }
+h1 .sub { color: var(--tenue); font-weight: 400; margin-left: .5rem; }
+h2 {
+  font-size: .78rem; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--tenue); margin: 0 0 .6rem; font-weight: 600;
+}
+h2 small { text-transform: none; letter-spacing: 0; font-weight: 400; }
+.pill {
+  font-size: .78rem; padding: .25rem .7rem; border-radius: 999px;
+  border: 1px solid var(--borde); white-space: nowrap;
+}
+.pill-ok { color: var(--acento); border-color: currentColor; }
+.pill-espera { color: var(--aviso); border-color: currentColor; }
+main {
+  display: grid; grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 1rem; padding: 1rem; align-items: start;
+}
+@media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+.visor {
+  background: #000; border: 1px solid var(--borde); border-radius: 10px;
+  overflow: hidden; line-height: 0;
+}
+.visor img { width: 100%; height: auto; display: block; }
+.panel { display: flex; flex-direction: column; gap: .75rem; }
+.bloque {
+  background: var(--panel); border: 1px solid var(--borde);
+  border-radius: 10px; padding: .85rem .95rem;
+}
+.kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+.kpi { display: flex; flex-direction: column; gap: .15rem; }
+.kpi .valor { font-size: 1.35rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+.kpi .etiqueta { font-size: .68rem; color: var(--tenue); line-height: 1.25; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+td { padding: .22rem 0; border-bottom: 1px solid var(--borde); }
+tr:last-child td { border-bottom: 0; }
+td:first-child { color: var(--tenue); }
+td:last-child { text-align: right; }

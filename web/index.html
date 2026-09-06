@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIRA — Inferencia sobre vídeo</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>SIRA <span class="sub">inferencia sobre vídeo</span></h1>
+  <div id="estado" class="pill pill-espera">conectando…</div>
+</header>
+
+<main>
+  <section class="visor">
+    <img id="stream" src="/stream" alt="Vídeo anotado">
+  </section>
+
+  <aside class="panel">
+    <div class="bloque">
+      <h2>Rendimiento</h2>
+      <div class="kpis">
+        <div class="kpi"><span class="valor" id="fps">—</span><span class="etiqueta">FPS</span></div>
+        <div class="kpi"><span class="valor" id="latencia">—</span><span class="etiqueta">inferencia p50 (ms)</span></div>
+        <div class="kpi"><span class="valor" id="dets">—</span><span class="etiqueta">detecciones</span></div>
+      </div>
+    </div>
+
+    <div class="bloque">
+      <h2>Tiempos por etapa <small>p50 / p95 ms</small></h2>
+      <table id="tiempos"><tbody></tbody></table>
+    </div>
+
+    <div class="bloque">
+      <h2>Frames</h2>
+      <table id="frames"><tbody></tbody></table>
+    </div>
+
+    <div class="bloque">
+      <h2>Configuración</h2>
+      <table id="config"><tbody></tbody></table>
+    </div>
+  </aside>
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
