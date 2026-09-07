@@ -227,3 +227,16 @@ nada; si se quisiera ir más rápido, habría que atacar esas dos.
 
 Detalle en [fase-6](fase-6-benchmark.md), y la discusión completa en
 [optimizacion-inferencia](optimizacion-inferencia.md).
+
+---
+
+## Y a partir de aquí
+
+Las mejoras que tienen recorrido no están en este repositorio sino en el de
+entrenamiento, que es donde se decide qué artefacto existe y con qué criterio se
+promociona. Están recogidas en [trabajo-futuro](trabajo-futuro.md), ancladas a las
+especificaciones de `camma-laparoscopy`.
+
+La discusión completa del rendimiento —qué se ganó, dónde están los cuellos de botella y
+por qué seguir optimizando el modelo ya no compensa— está en
+[optimizacion-inferencia](optimizacion-inferencia.md).
